@@ -1,5 +1,7 @@
 # SimpleLocalize OTA SDK for Apple platforms
 
+[![CI](https://github.com/simplelocalize/simplelocalize-ota-sdk-apple/actions/workflows/ci.yml/badge.svg)](https://github.com/simplelocalize/simplelocalize-ota-sdk-apple/actions/workflows/ci.yml)
+
 Over-the-air translations for iOS, macOS, tvOS and watchOS apps. Translations are fetched at
 runtime from [SimpleLocalize Translation Hosting](https://simplelocalize.io) (`cdn.simplelocalize.io`),
 so fixing a typo or adding a language is a **publish**, not an App Store release.

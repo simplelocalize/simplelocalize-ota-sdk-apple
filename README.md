@@ -1,0 +1,131 @@
+# SimpleLocalize OTA SDK for Apple platforms
+
+Over-the-air translations for iOS, macOS, tvOS and watchOS apps. Translations are fetched at
+runtime from [SimpleLocalize Translation Hosting](https://simplelocalize.io) (`cdn.simplelocalize.io`),
+so fixing a typo or adding a language is a **publish**, not an App Store release.
+
+- No dependencies, no build phase, ~700 lines of Swift.
+- Works with existing `NSLocalizedString` / SwiftUI `Text("key")` call sites (opt-in), or through
+  an explicit API.
+- Offline first: last downloaded content is cached on disk, strings compiled into the app stay the
+  final fallback.
+- Cheap refresh: conditional `If-None-Match` requests, so an unchanged refresh transfers no body.
+
+## Installation
+
+Swift Package Manager:
+
+```swift
+.package(url: "https://github.com/simplelocalize/ota-sdk-apple.git", from: "0.1.0")
+```
+
+## Quick start
+
+```swift
+import SimpleLocalizeOTA
+
+@main
+struct MyApp: App {
+  init() {
+    SimpleLocalize.shared.start(
+      SimpleLocalizeConfiguration(
+        projectToken: "5a5b1f...",   // Settings -> Credentials, public by design
+        environment: "_production",  // "_latest" for dev builds
+        fallbackLanguage: "en"
+      )
+    )
+  }
+}
+```
+
+Read strings:
+
+```swift
+label.text = SLLocalizedString("home.title")
+label.text = "home.title".simpleLocalized
+label.text = "cart.items".simpleLocalized(arguments: 3)   // "%d items in cart"
+```
+
+`start(_:)` is non-blocking: it loads the disk cache synchronously (so the first frame already has
+the last known translations) and refreshes in the background.
+
+## Zero-touch integration with NSLocalizedString
+
+```swift
+SimpleLocalize.enableBundleIntegration()
+```
+
+This swaps the class of `Bundle.main`, so every `NSLocalizedString`, `String(localized:)`,
+storyboard string and SwiftUI `Text("key")` resolves through the SDK first and falls back to the
+`.strings` / String Catalog compiled into the app. No call site changes.
+
+Caveat: views already on screen are not re-rendered when new translations arrive. Observe
+`SimpleLocalize.translationsDidChangeNotification`, or in SwiftUI use `.simpleLocalizeAware()`.
+
+## SwiftUI
+
+```swift
+struct ContentView: View {
+  @StateObject private var localization = SimpleLocalizeObservable()
+
+  var body: some View {
+    VStack {
+      Text(localization.string("home.title"))
+      Text(simpleLocalized: "home.subtitle")
+      Button("Polski") { localization.setLanguage("pl") }
+    }
+    .simpleLocalizeAware()   // rebuilds when translations change
+  }
+}
+```
+
+## Configuration
+
+| Option | Default | Meaning |
+|---|---|---|
+| `projectToken` | – | Settings -> Credentials |
+| `environment` | `_production` | `_latest`, `_production` or a custom environment key |
+| `baseURL` | `https://cdn.simplelocalize.io` | change it for a custom hosting provider (S3/GCS/Azure) |
+| `namespaces` | `[]` | downloaded namespaces; a namespace maps to the `table` of `NSLocalizedString` |
+| `language` | `nil` | forced language key; `nil` resolves it from `Locale.preferredLanguages` |
+| `fallbackLanguage` | `nil` | language used for keys missing in the current one |
+| `customerId` | `nil` | customer specific translations (`{language}_{customerId}`) |
+| `minimumRefreshInterval` | `600 s` | throttle for automatic refreshes |
+| `refreshOnForeground` | `true` | refresh when the app becomes active |
+| `session` | `.shared` | inject your own `URLSession` |
+| `logHandler` | `nil` | diagnostics sink |
+
+## How lookup works
+
+1. over-the-air translation in the current language,
+2. over-the-air translation in `fallbackLanguage`,
+3. string compiled into the app (`.strings` / String Catalog),
+4. the key itself.
+
+Language keys are matched against the device locale in this order: `en_GB`, `en-GB`, `en` - the
+first one published on the CDN wins and is remembered across launches.
+
+Hosting can publish flat (`{"home.title": "Hi"}`) or nested (`{"home": {"title": "Hi"}}`) JSON;
+both are supported and nested payloads are flattened to dot separated keys.
+
+## Refresh model
+
+- `start(_:)` - disk cache immediately, network refresh in the background.
+- app foreground - throttled by `minimumRefreshInterval`.
+- `SimpleLocalize.shared.refresh()` - manual, ignores the throttle.
+
+`_production` is served with `Cache-Control: max-age=3600`, so a publication reaches users within
+about an hour; point debug builds at `_latest` to iterate faster.
+
+## Not covered (on purpose)
+
+- Plurals (`.stringsdict`) and `String Catalog` variations are not overridden - a plural key keeps
+  using the bundled resource. Publish the plural forms as separate keys if you need them over the air.
+- No writes: the SDK never sends anything to SimpleLocalize; the CDN is public and read-only.
+
+## Development
+
+```bash
+swift build
+swift test
+```

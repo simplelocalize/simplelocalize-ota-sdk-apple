@@ -57,9 +57,19 @@ the last known translations) and refreshes in the background.
 SimpleLocalize.enableBundleIntegration()
 ```
 
-This swaps the class of `Bundle.main`, so every `NSLocalizedString`, `String(localized:)`,
-storyboard string and SwiftUI `Text("key")` resolves through the SDK first and falls back to the
-`.strings` / String Catalog compiled into the app. No call site changes.
+This swaps the class of `Bundle.main`, so `NSLocalizedString` and `Bundle.main.localizedString`
+- and with them UIKit code, storyboards and XIBs - resolve through the SDK first and fall back to
+the `.strings` / String Catalog compiled into the app. No call site changes.
+
+**SwiftUI is not covered.** `Text("key")` and `String(localized:)` do not ask
+`Bundle.main.localizedString`, so they keep rendering the bundled text (verified on Xcode 26 /
+iOS 26). In SwiftUI read strings explicitly - it is one initializer away:
+
+```swift
+Text(simpleLocalized: "home.title")
+Text("home.title".simpleLocalized)
+Text(localization.string("home.title"))
+```
 
 Caveat: views already on screen are not re-rendered when new translations arrive. Observe
 `SimpleLocalize.translationsDidChangeNotification`, or in SwiftUI use `.simpleLocalizeAware()`.

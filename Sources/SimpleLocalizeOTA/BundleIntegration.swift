@@ -13,11 +13,14 @@ private final class SimpleLocalizeBundle: Bundle, @unchecked Sendable {
 
 public extension SimpleLocalize {
 
-  /// Makes existing `NSLocalizedString` / `String(localized:)` / SwiftUI `Text("key")` calls
-  /// return over-the-air translations, without touching call sites.
+  /// Makes existing `NSLocalizedString` and `Bundle.main.localizedString` calls - and with them
+  /// UIKit code, storyboards and XIBs - return over-the-air translations, without touching call sites.
   ///
   /// It swaps the class of `Bundle.main` (no method swizzling of shared classes), and keys
   /// that were not downloaded fall through to the strings compiled into the app.
+  ///
+  /// SwiftUI is not covered: `Text("key")` and `String(localized:)` resolve without asking
+  /// `Bundle.main`, so use `Text(simpleLocalized:)` or ``SimpleLocalize/string(_:table:defaultValue:)``.
   ///
   /// Call it once, before the first UI is built. Views already on screen are not re-rendered
   /// automatically - observe ``SimpleLocalize/translationsDidChangeNotification`` for that.

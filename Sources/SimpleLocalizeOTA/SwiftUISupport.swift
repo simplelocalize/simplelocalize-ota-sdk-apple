@@ -61,9 +61,8 @@ private struct SimpleLocalizeAwareModifier: ViewModifier {
 
 @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 public extension View {
-  /// Rebuilds the view subtree when translations change. Useful together with
-  /// ``SimpleLocalize/enableBundleIntegration()``, where `Text("key")` has no other way
-  /// of knowing that its content changed.
+  /// Rebuilds the view subtree when translations change, so `Text(simpleLocalized:)` and
+  /// `"key".simpleLocalized` show freshly downloaded content.
   func simpleLocalizeAware() -> some View {
     modifier(SimpleLocalizeAwareModifier())
   }

@@ -50,7 +50,7 @@ public extension Text {
   }
 }
 
-@available(iOS 13.0, macOS 11.0, tvOS 13.0, watchOS 6.0, *)
+@available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
 private struct SimpleLocalizeAwareModifier: ViewModifier {
   @StateObject private var localization = SimpleLocalizeObservable()
 

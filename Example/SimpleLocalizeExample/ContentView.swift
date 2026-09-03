@@ -7,30 +7,32 @@ struct ContentView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text("home.title")
+      Text(simpleLocalized: "home.title")
         .font(.largeTitle.bold())
 
-      Text("home.subtitle")
+      Text(simpleLocalized: "home.subtitle")
         .font(.body)
         .foregroundStyle(.secondary)
 
-      Text("home.greeting")
+      Text(simpleLocalized: "home.greeting")
         .font(.body)
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
 
-      Text("home.language")
+      Text(simpleLocalized: "home.language")
         .font(.subheadline.weight(.medium))
-      Picker("home.language", selection: languageBinding) {
+      Picker(selection: languageBinding) {
         ForEach(["en", "pl", "de"], id: \.self) { Text($0).tag($0) }
+      } label: {
+        EmptyView()
       }
       .pickerStyle(.segmented)
 
       Button {
         SimpleLocalize.shared.refresh()
       } label: {
-        Text("home.cta").frame(maxWidth: .infinity)
+        Text(simpleLocalized: "home.cta").frame(maxWidth: .infinity)
       }
       .buttonStyle(.borderedProminent)
       .controlSize(.large)

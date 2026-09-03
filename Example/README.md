@@ -19,7 +19,8 @@ It works out of the box with the strings bundled in `SimpleLocalizeExample/en.lp
 ## What it shows
 
 - `SimpleLocalize.shared.start()` and `enableBundleIntegration()` in `ExampleApp.swift`,
-  so plain `Text("home.title")` resolves over the air,
+- `Text(simpleLocalized:)`, which is how SwiftUI reads over-the-air strings - the bundle
+  integration covers `NSLocalizedString` and UIKit, but not SwiftUI,
 - `.simpleLocalizeAware()`, which re-renders the screen when new translations arrive,
 - `setLanguage()` behind the language picker.
 

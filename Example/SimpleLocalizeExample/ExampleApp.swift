@@ -11,7 +11,7 @@ struct ExampleApp: App {
     SimpleLocalize.shared.start(
       SimpleLocalizeConfiguration(
         projectToken: projectToken,
-        environment: "_production",
+        environment: "_latest",
         fallbackLanguage: "en"
       )
     )

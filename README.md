@@ -114,6 +114,23 @@ struct ContentView: View {
 3. string compiled into the app (`.strings` / String Catalog),
 4. the key itself.
 
+Over-the-air content is a **per-key overlay on top of the app's own resources**, never a
+replacement: anything that is not published keeps rendering the string compiled into the app, key
+by key on the same screen. An empty translation counts as missing, so publishing missing
+translations as empty strings does not blank out the UI.
+
+The same layering applies to the network: memory, then the disk cache, then the app. A failed
+refresh - offline, HTTP error, unpublished resource - never drops content already downloaded, and
+an app launched offline with an empty cache simply shows its bundled strings.
+
+Two limits worth knowing:
+
+- The overlay only reaches call sites that go through the SDK (see the two sections above);
+  plurals always stay with the bundled resources, see [Roadmap](#roadmap).
+- If everything published for the resolved language disappears from hosting (404 on every
+  resource), the SDK forgets that language and falls back to the bundled strings, even when it
+  still holds them in the cache.
+
 Language keys are matched against the device locale in this order: `en_GB`, `en-GB`, `en` - the
 first one published on the CDN wins and is remembered across launches.
 

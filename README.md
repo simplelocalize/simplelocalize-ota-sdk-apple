@@ -15,11 +15,13 @@ so fixing a typo or adding a language is a **publish**, not an App Store release
 
 ## Installation
 
-Swift Package Manager:
+Swift Package Manager - in Xcode (**File → Add Package Dependencies…**) or in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/simplelocalize/ota-sdk-apple.git", from: "0.1.0")
+.package(url: "https://github.com/simplelocalize/simplelocalize-ota-sdk-apple.git", branch: "main")
 ```
+
+Tagged releases will follow; until then pin a commit if you need reproducible builds.
 
 ## Quick start
 

@@ -123,6 +123,10 @@ about an hour; point debug builds at `_latest` to iterate faster.
 
 - Plurals (`.stringsdict`) are not supported yet.
 
+## Example app
+
+A runnable iOS app lives in [`Example/`](Example) - open `Example/SimpleLocalizeExample.xcodeproj` and press Run.
+
 ## Development
 
 ```bash

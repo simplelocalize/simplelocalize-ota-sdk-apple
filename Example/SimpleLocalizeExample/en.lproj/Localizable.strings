@@ -1,0 +1,6 @@
+/* Keys here are the translation keys in SimpleLocalize; over-the-air content replaces them. */
+"home.title" = "Translations without a release";
+"home.subtitle" = "These strings come from Translation Hosting. Publish a change and it lands here.";
+"home.greeting" = "Hello! This text is bundled in the app and replaced over the air.";
+"home.cta" = "Refresh translations";
+"home.language" = "Language";

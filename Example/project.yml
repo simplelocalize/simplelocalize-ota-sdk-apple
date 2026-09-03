@@ -1,0 +1,27 @@
+name: SimpleLocalizeExample
+
+options:
+  bundleIdPrefix: io.simplelocalize
+  deploymentTarget:
+    iOS: "16.0"
+
+packages:
+  SimpleLocalizeOTA:
+    path: ../
+
+targets:
+  SimpleLocalizeExample:
+    type: application
+    platform: iOS
+    sources: [SimpleLocalizeExample]
+    dependencies:
+      - package: SimpleLocalizeOTA
+        product: SimpleLocalizeOTA
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.simplelocalize.ota.example
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: SimpleLocalize OTA
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "5.0"
